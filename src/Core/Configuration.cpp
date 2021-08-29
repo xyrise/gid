@@ -19,41 +19,57 @@ namespace Core {
 
     std::string current_line;
     while (std::getline(config_file, current_line)) {
-      if (current_line.length() >= 3u) {
-        size_t split = current_line.find(":");
-        if (split == std::string::npos) {
-          if (current_line.find("start") != std::string::npos) {
-            current_git_config = Git::Configuration();
-          }
-          else if (current_line.find("end") != std::string::npos) {
-            this->git_configurations.push_back(current_git_config);
-          }
-          else if (current_line.find("default") != std::string::npos) {
-            current_git_config = Git::Configuration();
-            this->active_git_configuration_index =
-              this->git_configurations.size();
+      bool split = false;
+      int key_start, key_end, val_start, val_end;
+      key_start = key_end = val_start = val_end = -1;
+      for (int i = 0; i < current_line.size(); ++i) {
+        if (current_line[i] != ' ') {
+          if (current_line[i] == ':') split = true;
+          else {
+            if (!split) {
+              if (key_start == -1) key_start = i;
+              else key_end = i;
+            }
+            else {
+              if (val_start == -1) val_start = i;
+              else val_end = i;
+            }
           }
         }
-        else {
-          std::string key = current_line.substr(0, split);
-          std::string value = current_line.substr(split + 1);
+      }
+      std::string key, val;
+      if (key_start != key_end) key =
+        current_line.substr(key_start, key_end + 1);
+      else continue;
+      if (val_start != val_end) val =
+        current_line.substr(val_start, val_end + 1);
 
-          if (key.find("user.name") != std::string::npos) {
-            current_git_config.user_name = value;
-          }
-          else if (key.find("user.email") != std::string::npos) {
-            current_git_config.user_email = value;
-          }
-          else if (key.find("commit.template") != std::string::npos) {
-            current_git_config.commit_template = value;
-          }
-          else if (key.find("user.signingkey") != std::string::npos) {
-            current_git_config.user_signingkey = value;
-          }
-          else if (key.find("ssh_key_path") != std::string::npos) {
-            current_git_config.private_ssh_key = std::filesystem::path(value);
-          }
+      if (val.empty()) {
+        if (key == "start") {
+          current_git_config = Git::Configuration();
         }
+        else if (key == "default") {
+          current_git_config = Git::Configuration();
+          this->active_git_configuration_index =
+            this->git_configurations.size();
+        }
+        else if (key == "end") {
+          this->git_configurations.push_back(
+              current_git_config
+          );
+        }
+      }
+      else {
+        if (key == "user.name")
+          current_git_config.user_name = val;
+        else if (key == "user.email")
+          current_git_config.user_email = val;
+        else if (key == "commit.template")
+          current_git_config.commit_template = val;
+        else if (key == "user.signingkey")
+          current_git_config.user_signingkey = val;
+        else if (key == "ssh_key_path")
+          current_git_config.private_ssh_key = std::filesystem::path(val);
       }
     }
   }
