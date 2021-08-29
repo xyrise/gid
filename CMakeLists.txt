@@ -17,3 +17,10 @@ target_include_directories (gid
 
 add_subdirectory ("./include")
 add_subdirectory ("./src")
+
+install (
+  TARGETS
+    gid
+  DESTINATION
+    bin
+)
