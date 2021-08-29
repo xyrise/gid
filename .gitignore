@@ -7,6 +7,11 @@
 !*.md
 !LICENSE
 !.gitignore
+!*CMakeLists.txt
+
+!*.cpp
+!*.hpp
 
 
 # Blacklist (overrides Whitelist)
+build/*
