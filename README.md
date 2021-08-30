@@ -46,14 +46,14 @@ To use gid, a configuration file located at
 This configuration file has a very simple syntax, shown below.
 
 ```
-start
+start : my_config_name
 user.name : my_git_name
 user.email : my_git_email
 user.signingkey : my_gpg_key
 ssh_key_path : ~/.ssh/id_rsa
 end
 
-default
+default : my_config_name_2
 user.name : my_git_name2
 user.email : my_git_email2
 user.signingkey : my_gpg_key2
@@ -63,7 +63,9 @@ end
 
 Each Git configuration must be started by either `start` or `default`, in its
 own line. `default` denotes the Git configuration to be used by default for
-`gid`. Each Git configuration must be ended with `end`.
+`gid`. Both `start` and `default` must be followed by a name for the
+configuration, after a `:` delimiter. Each Git configuration must also be ended
+with `end`.
 
 Each Git configuration can support up to five different settings:
 

@@ -5,7 +5,7 @@
 
 #include <filesystem>
 #include <string>
-#include <vector>
+#include <unordered_map>
 
 #include "gid/Git/Configuration.hpp"
 
@@ -14,16 +14,17 @@ namespace Core {
 
   class Configuration {
     private:
-      size_t active_git_configuration_index;
-      std::vector<Git::Configuration> git_configurations;
+      std::string active_git_configuration = "";
+      std::unordered_map<std::string, Git::Configuration> git_configurations;
 
     public:
       static std::filesystem::path configuration_path;
 
       /* Fills configuration class with parsed info */
-      void parse(std::filesystem::path const p);
+      void parse(std::filesystem::path const& p);
 
-      Git::Configuration const* active_git_configuration() const;
+      void setActiveGitConfiguration(std::string const&);
+      Git::Configuration const* getActiveGitConfiguration() const;
 
   }; /* class Configuration */
 

@@ -17,10 +17,10 @@ int main(int argc, char * argv[]) {
   Core::Configuration config;
   config.parse(Core::Configuration::configuration_path);
 
-  Git::Configuration const* active = config.active_git_configuration();
-  if (active) {
-    /* Call Git */
-    system((active->command() + user_args).c_str());
-  }
+  Git::Configuration const* active = config.getActiveGitConfiguration();
+  // active is not null-checked as an exception will be raised if not found
+
+  /* Call Git */
+  system((active->command() + user_args).c_str());
   return 0;
 }
