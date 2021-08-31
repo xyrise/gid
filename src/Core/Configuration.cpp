@@ -72,6 +72,10 @@ namespace Core {
     }
   }
 
+  bool Configuration::gitConfigurationExists(std::string const& name) {
+    return this->git_configurations.count(name);
+  }
+
   void Configuration::setActiveGitConfiguration(std::string const& name) {
     this->active_git_configuration = name;
   }

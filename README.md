@@ -94,3 +94,11 @@ Using `gid` instead of `git` will preserve all local/global Git settings with
 the exception of the settings specified in the `gid` configuration file. These
 `gid` configuration settings will overwrite Git configuration on a per-call
 basis, instead of permanently modifying the local/global Git configuration.
+
+To use a different Git configuration, simply add the configuration name as the
+**first** argument after the executable.
+
+```console
+gid my_config_name commit -S
+```
+

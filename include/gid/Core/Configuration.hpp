@@ -23,6 +23,8 @@ namespace Core {
       /* Fills configuration class with parsed info */
       void parse(std::filesystem::path const& p);
 
+      bool gitConfigurationExists(std::string const&);
+
       void setActiveGitConfiguration(std::string const&);
       Git::Configuration const* getActiveGitConfiguration() const;
 
