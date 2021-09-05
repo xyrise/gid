@@ -2,6 +2,13 @@
 
 > A terminal utility for managing multiple Git profiles.
 
+`gid` is a terminal Git profile manager that acts as an alias for the `git`
+command. Rather than changing local/global Git configuration files, `gid`
+directly inserts custom Git configurations into each call, allowing users
+to use the `git` command without any changes. `gid` is ideal for users that
+are looking for a minimally invasive convenient way to manage multiple Git
+profiles.
+
 ## Requirements
 
 `gid` requires no libraries or other external dependencies other than the
