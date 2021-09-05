@@ -40,8 +40,9 @@ make install
 
 ### Configuration
 
-To use gid, a configuration file located at
-`$HOME/.config/gid/configuration.gid` must be made.
+To use gid, a configuration file named `configuration.gid` must be made
+either in the same directory as the binary executable, or in the local
+`$HOME/.config/gid` directory.
 
 This configuration file has a very simple syntax, shown below.
 
