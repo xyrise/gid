@@ -9,8 +9,8 @@
 !.gitignore
 !*CMakeLists.txt
 
-!*.cpp
-!*.hpp
+!*.c
+!*.h
 
 
 # Blacklist (overrides Whitelist)

@@ -1,7 +1,5 @@
 target_sources (gid
   PRIVATE
-    "./gid.cpp"
+    "./gid.c"
+    "./configuration.c"
 )
-
-add_subdirectory ("./Core")
-add_subdirectory ("./Git")

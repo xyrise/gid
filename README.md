@@ -5,7 +5,7 @@
 ## Requirements
 
 `gid` requires no libraries or other external dependencies other than the
-CMake build system and a C++17 compiler.
+CMake build system and a C99 compiler.
 
 ## Building
 

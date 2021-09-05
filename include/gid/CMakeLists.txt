@@ -1,2 +1,5 @@
-add_subdirectory ("./Core")
-add_subdirectory ("./Git")
+target_sources ("gid"
+  PRIVATE
+    "./configuration.h"
+    "./gitprofile.h"
+)

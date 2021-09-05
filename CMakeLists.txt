@@ -4,10 +4,10 @@ project (gid
   VERSION 0.1.0
   DESCRIPTION ""
   HOMEPAGE_URL "https://github.com/xyrise/gid"
-  LANGUAGES CXX
+  LANGUAGES C
 )
 
-set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_C_STANDARD 99)
 
 add_executable (gid "")
 target_include_directories (gid
