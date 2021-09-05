@@ -1,6 +1,6 @@
 # gid
 
-> A terminal utility for managing multiple Git configurations.
+> A terminal utility for managing multiple Git profiles.
 
 ## Requirements
 
@@ -47,25 +47,25 @@ either in the same directory as the binary executable, or in the local
 This configuration file has a very simple syntax, shown below.
 
 ```
-start : my_config_name
+start : my_profile_name
 user.name : my_git_name
 user.email : my_git_email
 user.signingkey : my_gpg_key
 ssh_key_path : ~/.ssh/id_rsa
 
-default : my_config_name_2
+default : my_profile_name_2
 user.name : my_git_name2
 user.email : my_git_email2
 user.signingkey : my_gpg_key2
 ssh_key_path : ~/.ssh/id_rsa2
 ```
 
-Each Git configuration must be started by either `start` or `default`, in its
-own line. `default` denotes the Git configuration to be used by default for
+Each Git profile must be started by either `start` or `default`, in its
+own line. `default` denotes the Git profile to be used by default for
 `gid`. Both `start` and `default` must be followed by a name for the
-configuration, after a `:` delimiter.
+profile, after a `:` delimiter.
 
-Each Git configuration can support up to five different settings:
+Each Git profile can support up to five different settings:
 
 - `user.name`
 - `user.email`
@@ -76,7 +76,7 @@ Each Git configuration can support up to five different settings:
 Each setting is given a value after a `:` delimiter. All settings are named
 equivalently to the Git configuration setting, except for `ssh_key_path`; the
 `ssh_key_path` allows usage of a specific private SSH key for each Git
-configuration.
+profile.
 
 ### Running
 
@@ -93,10 +93,10 @@ the exception of the settings specified in the `gid` configuration file. These
 `gid` configuration settings will overwrite Git configuration on a per-call
 basis, instead of permanently modifying the local/global Git configuration.
 
-To use a different Git configuration, simply add the configuration name as the
-**first** argument after the executable.
+To use a different Git profile, simply add the profile name as the **first**
+argument after the executable.
 
 ```console
-gid my_config_name commit -S
+gid my_profile_name commit -S
 ```
 
