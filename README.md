@@ -1,5 +1,7 @@
 # gid
 
+![gid logo](assets/logo.png)
+
 > A terminal utility for managing multiple Git profiles.
 
 `gid` is a terminal Git profile manager that acts as an alias for the `git`
