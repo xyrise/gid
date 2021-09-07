@@ -6,6 +6,9 @@
 #include <string.h>
 #include <unistd.h>
 
+/* POSIX */
+#include <libgen.h>
+
 #include "gid/configuration.h"
 #include "gid/gitprofile.h"
 
@@ -14,33 +17,51 @@
 
 
 int main(int argc, char * argv[]) {
-  /* Parse gid configuration */
-  char local_config_path[PATH_MAX];
-  char global_config_path[PATH_MAX];
+  // Parse gid configuration
+  char config_path[PATH_MAX];
   GidConfiguration configuration;
 
-  local_config_path[0] = 0;
-  getcwd(local_config_path, PATH_MAX);
-  if (strlen(local_config_path) < PATH_MAX - 18) {
-    strcat(local_config_path, "/configuration.gid");
+  config_path[0] = 0;
+  // Environment variable configuration path
+  if (strlen(config_path) == 0) {
+    char const*const env_path = getenv("GID_CONFIGURATION");
+    if (env_path && strlen(env_path) < PATH_MAX) {
+      strcpy(config_path, env_path);
+    }
+    if (!access(config_path, F_OK)) {
+      configuration = parseFile(config_path);
+    }
+    else config_path[0] = 0;
   }
 
-  global_config_path[0] = 0;
-  char const*const home_path = getenv("HOME");
-  if (home_path) {
-    strcpy(global_config_path, home_path);
-  }
-  if (strlen(global_config_path) < PATH_MAX - 18) {
-    strcat(global_config_path, "/.config/gid/configuration.gid");
+  // Local configuration path
+  if (strlen(config_path) == 0) {
+    strcat(config_path, dirname(argv[0]));
+    if (strlen(config_path) < PATH_MAX - 18) {
+      strcat(config_path, "/configuration.gid");
+      if (!access(config_path, F_OK)) {
+        configuration = parseFile(config_path);
+      }
+      else config_path[0] = 0;
+    }
   }
 
-  if (!access(local_config_path, F_OK)) {
-    configuration = parseFile(local_config_path);
+  // Home `.config` folder configuration path
+  if (strlen(config_path) == 0) {
+    char const*const home_path = getenv("HOME");
+    if (home_path) {
+      strcpy(config_path, home_path);
+    }
+    if (strlen(config_path) < PATH_MAX - 18) {
+      strcat(config_path, "/.config/gid/configuration.gid");
+    }
+    if (!access(config_path, F_OK)) {
+      configuration = parseFile(config_path);
+    }
+    else config_path[0] = 0;
   }
-  else if (!access(global_config_path, F_OK)) {
-    configuration = parseFile(global_config_path);
-  }
-  else {
+
+  if (strlen(config_path) == 0) {
     fprintf(stderr, "no configuration file found\n");
     exit(EXIT_FAILURE);
   }
