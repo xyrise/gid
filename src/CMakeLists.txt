@@ -3,3 +3,9 @@ target_sources (gid
     "./gid.c"
     "./configuration.c"
 )
+
+target_sources (gidc
+  PRIVATE
+    "./gidc.c"
+    "./configuration.c"
+)

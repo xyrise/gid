@@ -107,3 +107,15 @@ argument after the executable.
 gid my_profile_name commit -S
 ```
 
+To change the Git configuration file according to a profile instead of calling
+a Git command directly, `gidc` can be used:
+
+```console
+gidc set local my_profile_name
+gidc set global my_profile_name_2
+```
+
+As of now, `gidc` can only be called with an accompanying `set`. Depending on
+whether `set` is followed by `local` or `global`, `gidc` will overwrite the
+respective local or global Git configuration according to the selected profile
+values.
