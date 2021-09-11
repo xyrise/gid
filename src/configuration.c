@@ -18,7 +18,16 @@ GidConfiguration parseFile(char const*const restrict file_name) {
   }
 
   GidConfiguration result;
+  result.git_profiles_length = 0;
   result.active_git_profile = -1;
+  for (size_t i = 0; i < GID_CONFIGURATION_MAX_NUM_PROFILES; ++i) {
+    result.git_profiles[i].name[0] = 0;
+    result.git_profiles[i].user_name[0] = 0;
+    result.git_profiles[i].user_email[0] = 0;
+    result.git_profiles[i].commit_template[0] = 0;
+    result.git_profiles[i].user_signingkey[0] = 0;
+    result.git_profiles[i].ssh_key_path[0] = 0;
+  }
   size_t const line_buffer_len = GID_CONFIGURATION_PARSE_LINEBUF_LEN;
   char line_buffer[line_buffer_len];
   while (fgets(line_buffer, line_buffer_len, file)) {
