@@ -12,7 +12,7 @@ GidConfiguration parseFile(char const*const restrict file_name) {
   FILE* file = fopen(file_name, "r");
   if (!file) {
     fprintf(stderr, "error opening ");
-    fprintf(stderr, file_name);
+    fprintf(stderr, "%s", file_name);
     fprintf(stderr, "\n");
     exit(EXIT_FAILURE);
   }
