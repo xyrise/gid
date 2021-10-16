@@ -109,8 +109,9 @@ int main(int argc, char * argv[]) {
     strcat(git_command, "\" ");
   }
   for (int i = start_git_args; i < argc; ++i) {
+    strcat(git_command, "\"");
     strcat(git_command, argv[i]);
-    strcat(git_command, " ");
+    strcat(git_command, "\" ");
   }
 
   system(git_command);

@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.13)
 
 project (gid
-  VERSION 1.1.2
+  VERSION 1.1.3
   DESCRIPTION "A terminal utility for managing multiple Git profiles."
   HOMEPAGE_URL "https://github.com/xyrise/gid"
   LANGUAGES C
