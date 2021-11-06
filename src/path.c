@@ -22,7 +22,7 @@ size_t dirLength(char const*const path) {
     }
     ++i;
   }
-  return i + 1;
+  return last_slash + 1;
 }
 
 void fillTrailingSlash(char* path) {
