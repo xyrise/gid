@@ -27,7 +27,7 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
 
   char buffer[GID_CONFIGURATION_PATH_MAX];
   // Local configuration path
-  if (dirLength(exe_path) < dest_size - 19) {
+  if (dest_size >= 19 && dirLength(exe_path) < dest_size - 19) {
     dirName(buffer, exe_path);
     fillTrailingSlash(buffer);
     strcat(buffer, "configuration.gid");
@@ -41,7 +41,7 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
 
   // Home `.config` folder configuration path
   char const*const home_path = getenv("HOME");
-  if (strlen(home_path) < dest_size - 31) {
+  if (dest_size >= 31 && strlen(home_path) < dest_size - 31) {
     strcpy(buffer, home_path);
     fillTrailingSlash(buffer);
     strcat(buffer, "/.config/gid/configuration.gid");
