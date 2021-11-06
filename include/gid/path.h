@@ -6,7 +6,7 @@
 
 
 // Copy directory path including trailing slash to destination
-void dirName(char* restrict, char const*const);
+void dirName(char*, char const*const);
 
 // Number of characters in directory path including trailing slash
 size_t dirLength(char const*const);

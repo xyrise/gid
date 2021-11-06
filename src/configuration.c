@@ -7,14 +7,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 
 bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
+  FILE* configuration_file;
+
   // Environment variable configuration path
   char const*const env_path = getenv("GID_CONFIGURATION");
   if (env_path && strlen(env_path) < dest_size) {
-    if (!access(env_path, F_OK)) {
+    configuration_file = fopen(env_path, "rb");
+    if (configuration_file) {
+      fclose(configuration_file);
       strcpy(dest, env_path);
       return true;
     }
@@ -26,7 +29,9 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
     dirName(buffer, exe_path);
     fillTrailingSlash(buffer);
     strcat(buffer, "configuration.gid");
-    if (!access(buffer, F_OK)) {
+    configuration_file = fopen(buffer, "rb");
+    if (configuration_file) {
+      fclose(configuration_file);
       strcpy(dest, buffer);
       return true;
     }
@@ -38,7 +43,9 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
     strcpy(buffer, home_path);
     fillTrailingSlash(buffer);
     strcat(buffer, "/.config/gid/configuration.gid");
-    if (!access(buffer, F_OK)) {
+    configuration_file = fopen(buffer, "rb");
+    if (configuration_file) {
+      fclose(configuration_file);
       strcpy(dest, buffer);
       return true;
     }
@@ -47,7 +54,7 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
   return false;
 }
 
-GidConfiguration parseFile(char const*const restrict file_name) {
+GidConfiguration parseFile(char const*const file_name) {
   FILE* file = fopen(file_name, "r");
   if (!file) {
     fprintf(stderr, "error opening ");
@@ -187,8 +194,8 @@ GidConfiguration parseFile(char const*const restrict file_name) {
 }
 
 int gitProfileExists(
-    GidConfiguration const*const restrict gid_configuration,
-    char const*const restrict profile_name
+    GidConfiguration const*const gid_configuration,
+    char const*const profile_name
 ) {
   for (size_t i = 0; i < gid_configuration->git_profiles_length; ++i) {
     if (!strcmp(&gid_configuration->git_profiles[i].name[0], profile_name))

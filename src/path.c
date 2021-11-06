@@ -4,7 +4,7 @@
 #include <string.h>
 
 
-void dirName(char* restrict dest, char const*const path) {
+void dirName(char* dest, char const*const path) {
   size_t dir_length = dirLength(path);
   strncpy(dest, path, dir_length);
 }

@@ -10,7 +10,6 @@
 
 #define GID_CONFIGURATION_MAX_NUM_PROFILES 10
 #define GID_CONFIGURATION_PARSE_LINEBUF_LEN 1024
-#define GID_CONFIGURATION_PATH_MAX 512
 
 typedef struct {
   GidGitProfile git_profiles[GID_CONFIGURATION_MAX_NUM_PROFILES];
@@ -19,11 +18,11 @@ typedef struct {
 } GidConfiguration;
 
 bool detectFile(char*, size_t, char const*const);
-GidConfiguration parseFile(char const*const restrict);
+GidConfiguration parseFile(char const*const);
 
 int gitProfileExists(
-    GidConfiguration const*const restrict,
-    char const*const restrict
+    GidConfiguration const*const,
+    char const*const
 );
 
 
