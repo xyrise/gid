@@ -11,6 +11,8 @@
 
 bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
   FILE* configuration_file;
+  if (dest_size > GID_CONFIGURATION_PATH_MAX)
+    dest_size = GID_CONFIGURATION_PATH_MAX;
 
   // Environment variable configuration path
   char const*const env_path = getenv("GID_CONFIGURATION");
@@ -23,7 +25,7 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
     }
   }
 
-  char buffer[dest_size];
+  char buffer[GID_CONFIGURATION_PATH_MAX];
   // Local configuration path
   if (dirLength(exe_path) < dest_size - 19) {
     dirName(buffer, exe_path);
@@ -74,8 +76,8 @@ GidConfiguration parseFile(char const*const file_name) {
     result.git_profiles[i].user_signingkey[0] = 0;
     result.git_profiles[i].ssh_key_path[0] = 0;
   }
+  char line_buffer[GID_CONFIGURATION_PARSE_LINEBUF_LEN];
   size_t const line_buffer_len = GID_CONFIGURATION_PARSE_LINEBUF_LEN;
-  char line_buffer[line_buffer_len];
   while (fgets(line_buffer, line_buffer_len, file)) {
     bool split = false;
     int key_start = -1;

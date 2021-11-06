@@ -8,15 +8,14 @@
 #include <string.h>
 
 
-#define PATH_MAX 512
 #define COMMAND_MAX (sizeof(GidGitProfile) - GID_GITPROFILE_NAME_LEN)
 
 int main(int argc, char * argv[]) {
   // Parse gid configuration
-  char config_path[PATH_MAX];
+  char config_path[GID_CONFIGURATION_PATH_MAX];
   GidConfiguration configuration;
 
-  if (!detectFile(config_path, PATH_MAX, argv[0])) {
+  if (!detectFile(config_path, GID_CONFIGURATION_PATH_MAX, argv[0])) {
     fprintf(stderr, "no configuration file found\n");
     exit(EXIT_FAILURE);
   }
