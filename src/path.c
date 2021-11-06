@@ -28,7 +28,7 @@ size_t dirLength(char const*const path) {
 void fillTrailingSlash(char* path) {
   size_t i = 0;
   while (path[i]) ++i;
-  if (i && path[i - 1] != '/' && path[i - 1] == '\\') {
+  if (i && path[i - 1] != '/' && path[i - 1] != '\\') {
     path[i] = '/';
     path[i + 1] = 0;
   }

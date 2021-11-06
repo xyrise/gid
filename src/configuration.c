@@ -29,7 +29,6 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
   // Local configuration path
   if (dest_size >= 19 && dirLength(exe_path) < dest_size - 19) {
     dirName(buffer, exe_path);
-    fillTrailingSlash(buffer);
     strcat(buffer, "configuration.gid");
     configuration_file = fopen(buffer, "rb");
     if (configuration_file) {
