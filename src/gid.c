@@ -1,71 +1,26 @@
 /* gid.c */
 
-/* Standard Library */
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
-/* POSIX */
-#include <libgen.h>
-
 #include "gid/configuration.h"
 #include "gid/gitprofile.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
 #define PATH_MAX 512
 #define COMMAND_MAX (sizeof(GidGitProfile) - GID_GITPROFILE_NAME_LEN)
-
 
 int main(int argc, char * argv[]) {
   // Parse gid configuration
   char config_path[PATH_MAX];
   GidConfiguration configuration;
 
-  config_path[0] = 0;
-  // Environment variable configuration path
-  if (strlen(config_path) == 0) {
-    char const*const env_path = getenv("GID_CONFIGURATION");
-    if (env_path && strlen(env_path) < PATH_MAX) {
-      strcpy(config_path, env_path);
-    }
-    if (!access(config_path, F_OK)) {
-      configuration = parseFile(config_path);
-    }
-    else config_path[0] = 0;
-  }
-
-  // Local configuration path
-  if (strlen(config_path) == 0) {
-    strcat(config_path, dirname(argv[0]));
-    if (strlen(config_path) < PATH_MAX - 18) {
-      strcat(config_path, "/configuration.gid");
-      if (!access(config_path, F_OK)) {
-        configuration = parseFile(config_path);
-      }
-      else config_path[0] = 0;
-    }
-  }
-
-  // Home `.config` folder configuration path
-  if (strlen(config_path) == 0) {
-    char const*const home_path = getenv("HOME");
-    if (home_path) {
-      strcpy(config_path, home_path);
-    }
-    if (strlen(config_path) < PATH_MAX - 18) {
-      strcat(config_path, "/.config/gid/configuration.gid");
-    }
-    if (!access(config_path, F_OK)) {
-      configuration = parseFile(config_path);
-    }
-    else config_path[0] = 0;
-  }
-
-  if (strlen(config_path) == 0) {
+  if (!detectFile(config_path, PATH_MAX, argv[0])) {
     fprintf(stderr, "no configuration file found\n");
     exit(EXIT_FAILURE);
   }
+  configuration = parseFile(config_path);
 
   char git_command[COMMAND_MAX];
   strcpy(git_command, "git ");

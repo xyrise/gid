@@ -1,12 +1,51 @@
 /* configuration.c */
-
 #include "gid/configuration.h"
+
+#include "gid/path.h"
 
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
+
+bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
+  // Environment variable configuration path
+  char const*const env_path = getenv("GID_CONFIGURATION");
+  if (env_path && strlen(env_path) < dest_size) {
+    if (!access(env_path, F_OK)) {
+      strcpy(dest, env_path);
+      return true;
+    }
+  }
+
+  char buffer[dest_size];
+  // Local configuration path
+  if (dirLength(exe_path) < dest_size - 19) {
+    dirName(buffer, exe_path);
+    fillTrailingSlash(buffer);
+    strcat(buffer, "configuration.gid");
+    if (!access(buffer, F_OK)) {
+      strcpy(dest, buffer);
+      return true;
+    }
+  }
+
+  // Home `.config` folder configuration path
+  char const*const home_path = getenv("HOME");
+  if (strlen(home_path) < dest_size - 31) {
+    strcpy(buffer, home_path);
+    fillTrailingSlash(buffer);
+    strcat(buffer, "/.config/gid/configuration.gid");
+    if (!access(buffer, F_OK)) {
+      strcpy(dest, buffer);
+      return true;
+    }
+  }
+
+  return false;
+}
 
 GidConfiguration parseFile(char const*const restrict file_name) {
   FILE* file = fopen(file_name, "r");
