@@ -98,7 +98,7 @@ GidConfiguration parseFile(char const*const file_name) {
     int val_start = -1;
     int val_end = -1;
     int i = 0;
-    while (i < line_buffer_len && line_buffer[i] != '\n') {
+    while (i < line_buffer_len && line_buffer[i] > 0) {
       // Ignore empty spaces in line
       if (isspace(line_buffer[i])) {
         ++i;
