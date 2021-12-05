@@ -196,12 +196,20 @@ GidConfiguration parseFile(char const*const file_name) {
         current_git_profile->user_signingkey[val_len] = 0;
       }
       else if (key_len == 12 && !strncmp(key, "ssh_key_path", 12)) {
-        if (val_len >= GID_GITPROFILE_SSH_KEY_PATH_LEN) {
+        if (val_len + 2 >= GID_GITPROFILE_SSH_KEY_PATH_LEN) {
           fprintf(stderr, "parsed \"ssh_key_path\" is too long\n");
           exit(EXIT_FAILURE);
         }
-        strncpy(&current_git_profile->ssh_key_path[0], val, val_len);
-        current_git_profile->ssh_key_path[val_len] = 0;
+        if (strchr(val, '\'')) {
+          strncpy(&current_git_profile->ssh_key_path[0], val, val_len);
+          current_git_profile->ssh_key_path[val_len] = 0;
+        }
+        else {
+          current_git_profile->ssh_key_path[0] = '\'';
+          strncpy(&current_git_profile->ssh_key_path[1], val, val_len);
+          current_git_profile->ssh_key_path[val_len + 1] = '\'';
+          current_git_profile->ssh_key_path[val_len + 2] = 0;
+        }
       }
     }
   }
