@@ -52,6 +52,20 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
     }
   }
 
+  // USERPROFILE as `.config` (only on Windows)
+  char const*const up_path = getenv("USERPROFILE");
+  if (up_path && dest_size >= 31 && strlen(up_path) < dest_size - 31) {
+    strcpy(buffer, up_path);
+    fillTrailingSlash(buffer);
+    strcat(buffer, "/.config/gid/configuration.gid");
+    configuration_file = fopen(buffer, "rb");
+    if (configuration_file) {
+      fclose(configuration_file);
+      strcpy(dest, buffer);
+      return true;
+    }
+  }
+
   return false;
 }
 
