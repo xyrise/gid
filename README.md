@@ -6,13 +6,13 @@
 
 `gid` is a terminal Git profile manager that acts as an alias for the `git`
 command. Rather than changing local/global Git configuration files, `gid`
-directly inserts custom Git configurations into each call. `gid` is ideal 
-for users that desire a minimally invasive but convenient way to manage 
+directly inserts custom Git configurations into each call. `gid` is ideal
+for users that desire a minimally invasive but convenient way to manage
 multiple Git identities.
 
 ## Requirements
 
-`gid` requires no libraries or other external dependencies other than the
+`gid` requires no libraries or external dependencies other than the
 CMake build system and a C99 compiler.
 
 ## Building
@@ -69,19 +69,27 @@ user.name : my_git_name2
 user.email : my_git_email2
 user.signingkey : my_gpg_key2
 ssh_key_path : ~/.ssh/id_rsa2
+
+start: my_profile_name_3
+user.name :my_git_name3
+commit.gpgsign: true
+commit.template: ~/commit_template_one.txt
 ```
 
 Each Git profile must be started by either `start` or `default`, in its
 own line. `default` denotes the Git profile to be used by default for
-`gid`. Both `start` and `default` must be followed by a name for the
-profile, after a `:` delimiter.
+`gid`, and only one `default` should exist in the configuration file. Both
+`start` and `default` must be followed by a name for the profile, after a `:`
+delimiter.
 
-Each Git profile can support up to five different settings:
+Each Git profile can support up to seven different settings:
 
 - `user.name`
 - `user.email`
 - `user.signingkey`
+- `commit.gpgsign`
 - `commit.template`
+- `pull.rebase`
 - `ssh_key_path`
 
 Each setting is given a value after a `:` delimiter. All settings are named
@@ -91,15 +99,15 @@ profile.
 
 ### Running
 
-After a proper configuration file has been made, Git commands in can be run
-with the `gid` executable.
+After a proper configuration file has been made, Git commands can be run with
+the `gid` executable.
 
 ```console
 gid add .
 gid commit -S
 ```
 
-Using `gid` instead of `git` will preserve all local/global Git settings with
+Using `gid` instead of `git` will inherit all local/global Git settings with
 the exception of the settings specified in the `gid` configuration file. These
 `gid` configuration settings will overwrite Git configuration on a per-call
 basis, instead of permanently modifying the local/global Git configuration.

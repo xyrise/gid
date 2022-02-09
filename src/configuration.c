@@ -195,6 +195,22 @@ GidConfiguration parseFile(char const*const file_name) {
         strncpy(&current_git_profile->user_signingkey[0], val, val_len);
         current_git_profile->user_signingkey[val_len] = 0;
       }
+      else if (key_len == 14 && !strncmp(key, "commit.gpgsign", 14)) {
+        if (val_len >= GID_GITPROFILE_COMMIT_GPGSIGN_LEN) {
+          fprintf(stderr, "parsed \"commit.gpgsign\" is too long\n");
+          exit(EXIT_FAILURE);
+        }
+        strncpy(&current_git_profile->commit_gpgsign[0], val, val_len);
+        current_git_profile->commit_gpgsign[val_len] = 0;
+      }
+      else if (key_len == 11 && !strncmp(key, "pull.rebase", 11)) {
+        if (val_len >= GID_GITPROFILE_PULL_REBASE_LEN) {
+          fprintf(stderr, "parsed \"pull.rebase\" is too long\n");
+          exit(EXIT_FAILURE);
+        }
+        strncpy(&current_git_profile->pull_rebase[0], val, val_len);
+        current_git_profile->pull_rebase[val_len] = 0;
+      }
       else if (key_len == 12 && !strncmp(key, "ssh_key_path", 12)) {
         if (val_len + 2 >= GID_GITPROFILE_SSH_KEY_PATH_LEN) {
           fprintf(stderr, "parsed \"ssh_key_path\" is too long\n");

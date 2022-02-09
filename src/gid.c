@@ -57,6 +57,16 @@ int main(int argc, char * argv[]) {
     strcat(git_command, profile->user_signingkey);
     strcat(git_command, "\" ");
   }
+  if (strlen(profile->commit_gpgsign)) {
+    strcat(git_command, "-c commit.gpgsign=\"");
+    strcat(git_command, profile->commit_gpgsign);
+    strcat(git_command, "\" ");
+  }
+  if (strlen(profile->pull_rebase)) {
+    strcat(git_command, "-c pull.rebase=\"");
+    strcat(git_command, profile->pull_rebase);
+    strcat(git_command, "\" ");
+  }
   if (strlen(profile->ssh_key_path)) {
     strcat(git_command, "-c core.sshCommand=\"ssh -i ");
     strcat(git_command, profile->ssh_key_path);
