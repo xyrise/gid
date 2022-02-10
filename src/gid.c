@@ -47,11 +47,6 @@ int main(int argc, char * argv[]) {
     strcat(git_command, profile->user_email);
     strcat(git_command, "\" ");
   }
-  if (strlen(profile->commit_template)) {
-    strcat(git_command, "-c commit.template=\"");
-    strcat(git_command, profile->commit_template);
-    strcat(git_command, "\" ");
-  }
   if (strlen(profile->user_signingkey)) {
     strcat(git_command, "-c user.signingkey=\"");
     strcat(git_command, profile->user_signingkey);
@@ -62,9 +57,19 @@ int main(int argc, char * argv[]) {
     strcat(git_command, profile->commit_gpgsign);
     strcat(git_command, "\" ");
   }
+  if (strlen(profile->commit_template)) {
+    strcat(git_command, "-c commit.template=\"");
+    strcat(git_command, profile->commit_template);
+    strcat(git_command, "\" ");
+  }
   if (strlen(profile->pull_rebase)) {
     strcat(git_command, "-c pull.rebase=\"");
     strcat(git_command, profile->pull_rebase);
+    strcat(git_command, "\" ");
+  }
+  if (strlen(profile->tag_gpgsign)) {
+    strcat(git_command, "-c tag.gpgsign=\"");
+    strcat(git_command, profile->tag_gpgsign);
     strcat(git_command, "\" ");
   }
   if (strlen(profile->ssh_key_path)) {

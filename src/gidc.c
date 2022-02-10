@@ -51,6 +51,20 @@ int main(int argc, char * argv[]) {
           strcat(git_command_copy, "\" ");
           system(git_command_copy);
         }
+        if (strlen(profile->user_signingkey)) {
+          strcpy(git_command_copy, git_command);
+          strcat(git_command_copy, "user.signingkey \"");
+          strcat(git_command_copy, profile->user_signingkey);
+          strcat(git_command_copy, "\" ");
+          system(git_command_copy);
+        }
+        if (strlen(profile->commit_gpgsign)) {
+          strcpy(git_command_copy, git_command);
+          strcat(git_command_copy, "commit.gpgsign \"");
+          strcat(git_command_copy, profile->commit_gpgsign);
+          strcat(git_command_copy, "\" ");
+          system(git_command_copy);
+        }
         if (strlen(profile->commit_template)) {
           strcpy(git_command_copy, git_command);
           strcat(git_command_copy, "commit.template \"");
@@ -58,10 +72,17 @@ int main(int argc, char * argv[]) {
           strcat(git_command_copy, "\" ");
           system(git_command_copy);
         }
-        if (strlen(profile->user_signingkey)) {
+        if (strlen(profile->pull_rebase)) {
           strcpy(git_command_copy, git_command);
-          strcat(git_command_copy, "user.signingkey \"");
-          strcat(git_command_copy, profile->user_signingkey);
+          strcat(git_command_copy, "pull.rebase \"");
+          strcat(git_command_copy, profile->pull_rebase);
+          strcat(git_command_copy, "\" ");
+          system(git_command_copy);
+        }
+        if (strlen(profile->tag_gpgsign)) {
+          strcpy(git_command_copy, git_command);
+          strcat(git_command_copy, "tag_gpgsign \"");
+          strcat(git_command_copy, profile->tag_gpgsign);
           strcat(git_command_copy, "\" ");
           system(git_command_copy);
         }
