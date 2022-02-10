@@ -8,6 +8,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _WIN32
+  #define strncasecmp strnicmp
+#endif
+
 
 bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
   FILE* configuration_file;
@@ -133,7 +137,7 @@ GidConfiguration parseFile(char const*const file_name) {
     char const*const key = &line_buffer[key_start];
     char const*const val = &line_buffer[val_start];
 
-    if (key_len == 5 && !strncmp(key, "start", 5)) {
+    if (key_len == 5 && !strncasecmp(key, "start", 5)) {
       if (val_len >= GID_GITPROFILE_NAME_LEN) {
         fprintf(stderr, "parsed Git profile name is too long\n");
         exit(EXIT_FAILURE);
@@ -146,7 +150,7 @@ GidConfiguration parseFile(char const*const file_name) {
       result.git_profiles[result.git_profiles_length].name[val_len] = 0;
       ++result.git_profiles_length;
     }
-    else if (key_len == 7 && !strncmp(key, "default", 7)) {
+    else if (key_len == 7 && !strncasecmp(key, "default", 7)) {
       result.active_git_profile = result.git_profiles_length;
       if (val_len >= GID_GITPROFILE_NAME_LEN) {
         fprintf(stderr, "parsed Git profile name is too long\n");
@@ -163,7 +167,7 @@ GidConfiguration parseFile(char const*const file_name) {
     else if (result.git_profiles_length > 0) {
       GidGitProfile* current_git_profile =
         &result.git_profiles[result.git_profiles_length - 1];
-      if (key_len == 9 && !strncmp(key, "user.name", 9)) {
+      if (key_len == 9 && !strncasecmp(key, "user.name", 9)) {
         if (val_len >= GID_GITPROFILE_USER_NAME_LEN) {
           fprintf(stderr, "parsed \"user.name\" is too long\n");
           exit(EXIT_FAILURE);
@@ -171,7 +175,7 @@ GidConfiguration parseFile(char const*const file_name) {
         strncpy(&current_git_profile->user_name[0], val, val_len);
         current_git_profile->user_name[val_len] = 0;
       }
-      else if (key_len == 10 && !strncmp(key, "user.email", 10)) {
+      else if (key_len == 10 && !strncasecmp(key, "user.email", 10)) {
         if (val_len >= GID_GITPROFILE_USER_EMAIL_LEN) {
           fprintf(stderr, "parsed \"user.email\" is too long\n");
           exit(EXIT_FAILURE);
@@ -179,7 +183,7 @@ GidConfiguration parseFile(char const*const file_name) {
         strncpy(&current_git_profile->user_email[0], val, val_len);
         current_git_profile->user_email[val_len] = 0;
       }
-      else if (key_len == 15 && !strncmp(key, "user.signingkey", 15)) {
+      else if (key_len == 15 && !strncasecmp(key, "user.signingkey", 15)) {
         if (val_len >= GID_GITPROFILE_USER_SIGNINGKEY_LEN) {
           fprintf(stderr, "parsed \"user.signingkey\" is too long\n");
           exit(EXIT_FAILURE);
@@ -187,7 +191,7 @@ GidConfiguration parseFile(char const*const file_name) {
         strncpy(&current_git_profile->user_signingkey[0], val, val_len);
         current_git_profile->user_signingkey[val_len] = 0;
       }
-      else if (key_len == 14 && !strncmp(key, "commit.gpgsign", 14)) {
+      else if (key_len == 14 && !strncasecmp(key, "commit.gpgsign", 14)) {
         if (val_len >= GID_GITPROFILE_COMMIT_GPGSIGN_LEN) {
           fprintf(stderr, "parsed \"commit.gpgsign\" is too long\n");
           exit(EXIT_FAILURE);
@@ -195,7 +199,7 @@ GidConfiguration parseFile(char const*const file_name) {
         strncpy(&current_git_profile->commit_gpgsign[0], val, val_len);
         current_git_profile->commit_gpgsign[val_len] = 0;
       }
-      else if (key_len == 15 && !strncmp(key, "commit.template", 15)) {
+      else if (key_len == 15 && !strncasecmp(key, "commit.template", 15)) {
         if (val_len >= GID_GITPROFILE_COMMIT_TEMPLATE_LEN) {
           fprintf(stderr, "parsed \"commit.template\" is too long\n");
           exit(EXIT_FAILURE);
@@ -203,7 +207,7 @@ GidConfiguration parseFile(char const*const file_name) {
         strncpy(&current_git_profile->commit_template[0], val, val_len);
         current_git_profile->commit_template[val_len] = 0;
       }
-      else if (key_len == 11 && !strncmp(key, "pull.rebase", 11)) {
+      else if (key_len == 11 && !strncasecmp(key, "pull.rebase", 11)) {
         if (val_len >= GID_GITPROFILE_PULL_REBASE_LEN) {
           fprintf(stderr, "parsed \"pull.rebase\" is too long\n");
           exit(EXIT_FAILURE);
@@ -211,7 +215,7 @@ GidConfiguration parseFile(char const*const file_name) {
         strncpy(&current_git_profile->pull_rebase[0], val, val_len);
         current_git_profile->pull_rebase[val_len] = 0;
       }
-      else if (key_len == 11 && !strncmp(key, "tag.gpgsign", 11)) {
+      else if (key_len == 11 && !strncasecmp(key, "tag.gpgsign", 11)) {
         if (val_len >= GID_GITPROFILE_TAG_GPGSIGN_LEN) {
           fprintf(stderr, "parsed \"tag.gpgsign\" is too long\n");
           exit(EXIT_FAILURE);
@@ -219,7 +223,7 @@ GidConfiguration parseFile(char const*const file_name) {
         strncpy(&current_git_profile->tag_gpgsign[0], val, val_len);
         current_git_profile->tag_gpgsign[val_len] = 0;
       }
-      else if (key_len == 12 && !strncmp(key, "ssh_key_path", 12)) {
+      else if (key_len == 12 && !strncasecmp(key, "ssh_key_path", 12)) {
         if (val_len + 2 >= GID_GITPROFILE_SSH_KEY_PATH_LEN) {
           fprintf(stderr, "parsed \"ssh_key_path\" is too long\n");
           exit(EXIT_FAILURE);
