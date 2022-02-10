@@ -9,7 +9,7 @@
 #include <string.h>
 
 #ifdef _WIN32
-  #define strncasecmp strnicmp
+  #define strncasecmp _strnicmp
 #endif
 
 
@@ -18,55 +18,71 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
   if (dest_size > GID_CONFIGURATION_PATH_MAX)
     dest_size = GID_CONFIGURATION_PATH_MAX;
 
+  size_t cpy_len = 0;
+
   // Environment variable configuration path
   char const*const env_path = getenv("GID_CONFIGURATION");
-  if (env_path && strlen(env_path) < dest_size) {
-    configuration_file = fopen(env_path, "rb");
-    if (configuration_file) {
-      fclose(configuration_file);
-      strcpy(dest, env_path);
-      return true;
+  if (env_path) {
+    cpy_len = strnlen(env_path, GID_CONFIGURATION_PATH_MAX - 1);
+    if (cpy_len < dest_size) {
+      configuration_file = fopen(env_path, "rb");
+      if (configuration_file) {
+        fclose(configuration_file);
+        strncpy(dest, env_path, cpy_len);
+        dest[cpy_len] = 0;
+        return true;
+      }
     }
   }
 
   char buffer[GID_CONFIGURATION_PATH_MAX];
   // Local configuration path
-  if (dest_size >= 19 && dirLength(exe_path) < dest_size - 19) {
+  cpy_len = dirLength(exe_path) + 17;
+  if (cpy_len < GID_CONFIGURATION_PATH_MAX && cpy_len < dest_size) {
     dirName(buffer, exe_path);
     strcat(buffer, "configuration.gid");
     configuration_file = fopen(buffer, "rb");
     if (configuration_file) {
       fclose(configuration_file);
-      strcpy(dest, buffer);
+      strncpy(dest, buffer, cpy_len);
+      dest[cpy_len] = 0;
       return true;
     }
   }
 
   // Home `.config` folder configuration path
   char const*const home_path = getenv("HOME");
-  if (home_path && dest_size >= 31 && strlen(home_path) < dest_size - 31) {
-    strcpy(buffer, home_path);
-    fillTrailingSlash(buffer);
-    strcat(buffer, "/.config/gid/configuration.gid");
-    configuration_file = fopen(buffer, "rb");
-    if (configuration_file) {
-      fclose(configuration_file);
-      strcpy(dest, buffer);
-      return true;
+  if (home_path) {
+    cpy_len = strnlen(home_path, GID_CONFIGURATION_PATH_MAX - 31) + 30;
+    if (cpy_len < dest_size) {
+      strncpy(buffer, home_path, cpy_len - 30);
+      buffer[cpy_len - 30] = 0;
+      fillTrailingSlash(buffer);
+      strcat(buffer, ".config/gid/configuration.gid");
+      configuration_file = fopen(buffer, "rb");
+      if (configuration_file) {
+        fclose(configuration_file);
+        strncpy(dest, buffer, cpy_len);
+        return true;
+      }
     }
   }
 
   // USERPROFILE as `.config` (only on Windows)
   char const*const up_path = getenv("USERPROFILE");
-  if (up_path && dest_size >= 31 && strlen(up_path) < dest_size - 31) {
-    strcpy(buffer, up_path);
-    fillTrailingSlash(buffer);
-    strcat(buffer, "/.config/gid/configuration.gid");
-    configuration_file = fopen(buffer, "rb");
-    if (configuration_file) {
-      fclose(configuration_file);
-      strcpy(dest, buffer);
-      return true;
+  if (up_path) {
+    cpy_len = strnlen(up_path, GID_CONFIGURATION_PATH_MAX - 31) + 30;
+    if (cpy_len < dest_size) {
+      strncpy(buffer, up_path, cpy_len - 30);
+      buffer[cpy_len - 30] = 0;
+      fillTrailingSlash(buffer);
+      strcat(buffer, ".config/gid/configuration.gid");
+      configuration_file = fopen(buffer, "rb");
+      if (configuration_file) {
+        fclose(configuration_file);
+        strncpy(dest, buffer, cpy_len);
+        return true;
+      }
     }
   }
 

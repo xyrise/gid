@@ -4,11 +4,13 @@
 #include <string.h>
 
 
+/* Return provided path up to (including) last separator */
 void dirName(char* dest, char const*const path) {
   size_t dir_length = dirLength(path);
   strncpy(dest, path, dir_length);
 }
 
+/* Return length of provided path up to (including) last separator */
 size_t dirLength(char const*const path) {
   size_t i = 0;
   size_t last_slash = 0;
