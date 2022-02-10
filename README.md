@@ -74,6 +74,7 @@ ssh_key_path : ~/.ssh/id_rsa2
 start: my_profile_name_3
 user.name :my_git_name3
 commit.gpgsign: true
+tag.gpgsign : true
 commit.template: ~/commit_template_one.txt
 ```
 
@@ -83,7 +84,7 @@ own line. `default` denotes the Git profile to be used by default for
 `start` and `default` must be followed by a name for the profile, after a `:`
 delimiter.
 
-Each Git profile can support up to seven different settings:
+Each Git profile can support the following settings:
 
 - `user.name`
 - `user.email`
@@ -91,6 +92,7 @@ Each Git profile can support up to seven different settings:
 - `commit.gpgsign`
 - `commit.template`
 - `pull.rebase`
+- `tag.gpgsign`
 - `ssh_key_path`
 
 Each setting is given a value after a `:` delimiter. All settings are named
