@@ -81,7 +81,7 @@ int main(int argc, char * argv[]) {
         }
         if (strlen(profile->tag_gpgsign)) {
           strcpy(git_command_copy, git_command);
-          strcat(git_command_copy, "tag_gpgsign \"");
+          strcat(git_command_copy, "tag.gpgsign \"");
           strcat(git_command_copy, profile->tag_gpgsign);
           strcat(git_command_copy, "\" ");
           system(git_command_copy);
