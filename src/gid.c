@@ -47,7 +47,8 @@ int main(int argc, char * argv[]) {
       false
   );
   // TODO: Change to memcpy instead of strcat
-  for (int i = start_git_args; i < argc; ++i) {
+  int i;
+  for (i = start_git_args; i < argc; ++i) {
     strcat(git_command, "\"");
     strcat(git_command, argv[i]);
     strcat(git_command, "\" ");

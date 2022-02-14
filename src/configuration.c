@@ -28,7 +28,7 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
       configuration_file = fopen(env_path, "rb");
       if (configuration_file) {
         fclose(configuration_file);
-        strncpy(dest, env_path, cpy_len);
+        strcpy(dest, env_path);
         dest[cpy_len] = 0;
         return true;
       }
@@ -44,7 +44,7 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
     configuration_file = fopen(buffer, "rb");
     if (configuration_file) {
       fclose(configuration_file);
-      strncpy(dest, buffer, cpy_len);
+      strcpy(dest, buffer);
       dest[cpy_len] = 0;
       return true;
     }
@@ -54,15 +54,14 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
   char const*const home_path = getenv("HOME");
   if (home_path) {
     cpy_len = strlen(home_path) + 30;
-    if (cpy_len < dest_size) {
-      strncpy(buffer, home_path, cpy_len - 30);
-      buffer[cpy_len - 30] = 0;
+    if (cpy_len < GID_CONFIGURATION_PATH_MAX && cpy_len < dest_size) {
+      strcpy(buffer, home_path);
       fillTrailingSlash(buffer);
       strcat(buffer, ".config/gid/configuration.gid");
       configuration_file = fopen(buffer, "rb");
       if (configuration_file) {
         fclose(configuration_file);
-        strncpy(dest, buffer, cpy_len);
+        strcpy(dest, buffer);
         return true;
       }
     }
@@ -72,15 +71,15 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
   char const*const up_path = getenv("USERPROFILE");
   if (up_path) {
     cpy_len = strlen(up_path) + 30;
-    if (cpy_len < dest_size) {
-      strncpy(buffer, up_path, cpy_len - 30);
+    if (cpy_len < GID_CONFIGURATION_PATH_MAX && cpy_len < dest_size) {
+      strcpy(buffer, up_path);
       buffer[cpy_len - 30] = 0;
       fillTrailingSlash(buffer);
       strcat(buffer, ".config/gid/configuration.gid");
       configuration_file = fopen(buffer, "rb");
       if (configuration_file) {
         fclose(configuration_file);
-        strncpy(dest, buffer, cpy_len);
+        strcpy(dest, buffer);
         return true;
       }
     }
@@ -101,7 +100,8 @@ GidConfiguration parseFile(char const*const file_name) {
   GidConfiguration result;
   result.git_profiles_length = 0;
   result.active_git_profile = -1;
-  for (size_t i = 0; i < GID_CONFIGURATION_MAX_NUM_PROFILES; ++i) {
+  size_t i;
+  for (i = 0; i < GID_CONFIGURATION_MAX_NUM_PROFILES; ++i) {
     result.git_profiles[i].name[0] = 0;
     result.git_profiles[i].user_name[0] = 0;
     result.git_profiles[i].user_email[0] = 0;
@@ -264,7 +264,8 @@ int gitProfileExists(
     GidConfiguration const*const gid_configuration,
     char const*const profile_name
 ) {
-  for (size_t i = 0; i < gid_configuration->git_profiles_length; ++i) {
+  size_t i;
+  for (i = 0; i < gid_configuration->git_profiles_length; ++i) {
     if (!strcmp(&gid_configuration->git_profiles[i].name[0], profile_name))
       return i;
   }

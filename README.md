@@ -13,7 +13,7 @@ multiple Git identities.
 ## Requirements
 
 `gid` requires no libraries or external dependencies if using the pre-built
-binaries. If building, it simply requires a working C99 compiler (or MSVC) and
+binaries. If building, it simply requires a working C90 compiler (or MSVC) and
 the CMake build system.
 
 ## Building

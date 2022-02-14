@@ -7,7 +7,7 @@ project (gid
   LANGUAGES C
 )
 
-set (CMAKE_C_STANDARD 99)
+set (CMAKE_C_STANDARD 90)
 
 add_executable (gid "")
 add_executable (gidc "")
