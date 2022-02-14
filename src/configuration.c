@@ -8,10 +8,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 #ifdef _WIN32
   #define strncasecmp _strnicmp
 #endif
-
 
 bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
   FILE* configuration_file;
@@ -23,7 +23,7 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
   // Environment variable configuration path
   char const*const env_path = getenv("GID_CONFIGURATION");
   if (env_path) {
-    cpy_len = strnlen(env_path, GID_CONFIGURATION_PATH_MAX - 1);
+    cpy_len = strlen(env_path);
     if (cpy_len < dest_size) {
       configuration_file = fopen(env_path, "rb");
       if (configuration_file) {
@@ -53,7 +53,7 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
   // Home `.config` folder configuration path
   char const*const home_path = getenv("HOME");
   if (home_path) {
-    cpy_len = strnlen(home_path, GID_CONFIGURATION_PATH_MAX - 31) + 30;
+    cpy_len = strlen(home_path) + 30;
     if (cpy_len < dest_size) {
       strncpy(buffer, home_path, cpy_len - 30);
       buffer[cpy_len - 30] = 0;
@@ -71,7 +71,7 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
   // USERPROFILE as `.config` (only on Windows)
   char const*const up_path = getenv("USERPROFILE");
   if (up_path) {
-    cpy_len = strnlen(up_path, GID_CONFIGURATION_PATH_MAX - 31) + 30;
+    cpy_len = strlen(up_path) + 30;
     if (cpy_len < dest_size) {
       strncpy(buffer, up_path, cpy_len - 30);
       buffer[cpy_len - 30] = 0;
