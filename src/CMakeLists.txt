@@ -3,6 +3,7 @@ target_sources (gid
     "./gid.c"
     "./configuration.c"
     "./path.c"
+    "./gitprofile.c"
 )
 
 target_sources (gidc
@@ -10,4 +11,5 @@ target_sources (gidc
     "./gidc.c"
     "./configuration.c"
     "./path.c"
+    "./gitprofile.c"
 )

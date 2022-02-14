@@ -37,46 +37,16 @@ int main(int argc, char * argv[]) {
   // Append arguments to internal Git call
   GidGitProfile const* profile =
     &configuration.git_profiles[configuration.active_git_profile];
-  if (strlen(profile->user_name)) {
-    strcat(git_command, "-c user.name=\"");
-    strcat(git_command, profile->user_name);
-    strcat(git_command, "\" ");
-  }
-  if (strlen(profile->user_email)) {
-    strcat(git_command, "-c user.email=\"");
-    strcat(git_command, profile->user_email);
-    strcat(git_command, "\" ");
-  }
-  if (strlen(profile->user_signingkey)) {
-    strcat(git_command, "-c user.signingkey=\"");
-    strcat(git_command, profile->user_signingkey);
-    strcat(git_command, "\" ");
-  }
-  if (strlen(profile->commit_gpgsign)) {
-    strcat(git_command, "-c commit.gpgsign=\"");
-    strcat(git_command, profile->commit_gpgsign);
-    strcat(git_command, "\" ");
-  }
-  if (strlen(profile->commit_template)) {
-    strcat(git_command, "-c commit.template=\"");
-    strcat(git_command, profile->commit_template);
-    strcat(git_command, "\" ");
-  }
-  if (strlen(profile->pull_rebase)) {
-    strcat(git_command, "-c pull.rebase=\"");
-    strcat(git_command, profile->pull_rebase);
-    strcat(git_command, "\" ");
-  }
-  if (strlen(profile->tag_gpgsign)) {
-    strcat(git_command, "-c tag.gpgsign=\"");
-    strcat(git_command, profile->tag_gpgsign);
-    strcat(git_command, "\" ");
-  }
-  if (strlen(profile->ssh_key_path)) {
-    strcat(git_command, "-c core.sshCommand=\"ssh -i ");
-    strcat(git_command, profile->ssh_key_path);
-    strcat(git_command, "\" ");
-  }
+  int num_params = concatParamStrings(
+      profile,
+      git_command,
+      COMMAND_MAX,
+      "-c ",
+      "=\"",
+      "\" ",
+      false
+  );
+  // TODO: Change to memcpy instead of strcat
   for (int i = start_git_args; i < argc; ++i) {
     strcat(git_command, "\"");
     strcat(git_command, argv[i]);

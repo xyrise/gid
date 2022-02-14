@@ -2,6 +2,9 @@
 #ifndef GID_GITPROFILE_H
 #define GID_GITPROFILE_H
 
+#include <stdbool.h>
+#include <stddef.h>
+
 
 #define GID_GITPROFILE_NAME_LEN 32
 #define GID_GITPROFILE_USER_NAME_LEN 32
@@ -25,6 +28,16 @@ typedef struct {
   char tag_gpgsign[GID_GITPROFILE_TAG_GPGSIGN_LEN];
   char ssh_key_path[GID_GITPROFILE_SSH_KEY_PATH_LEN];
 } GidGitProfile;
+
+int concatParamStrings(
+    GidGitProfile const* profile,
+    char* dest,
+    size_t const dest_size,
+    char const* param_prefix,
+    char const* param_infix,
+    char const* param_suffix,
+    bool system_call
+);
 
 
 #endif /* GID_GITPROFILE_H */
