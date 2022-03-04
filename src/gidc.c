@@ -36,7 +36,7 @@ int main(int argc, char * argv[]) {
         strcat(git_command_base, " ");
         active_git_profile = gitProfileExists(&configuration, argv[3]);
         profile = &configuration.git_profiles[active_git_profile];
-        int num_params = concatParamStrings(
+        concatParamStrings(
             profile,
             git_command,
             COMMAND_MAX,

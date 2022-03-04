@@ -6,13 +6,13 @@
 
 
 // Copy directory path including trailing slash to destination
-void dirName(char*, char const*const);
+void dirName(char *const, size_t const, char const*const);
 
 // Number of characters in directory path including trailing slash
-size_t dirLength(char const*const);
+size_t dirLength(char const *const, size_t const);
 
-void fillTrailingSlash(char*);
-void stripTrailingSlash(char*);
+void fillTrailingSlash(char *const, size_t const, char const *const);
+void stripTrailingSlash(char *const, size_t const, char const *const);
 
 
 #endif /* GID_PATH_H */

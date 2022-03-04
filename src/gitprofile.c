@@ -41,7 +41,9 @@ size_t concatParamString(
   if (system_call) {
     dest[dest_offset] = 0;
     dest_offset = orig_dest_offset;
-    system(dest);
+    if (system(dest)) {
+      fprintf(stderr, "Git command returned with non-zero exit code\n");
+    }
   }
   return dest_offset;
 }

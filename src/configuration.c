@@ -10,39 +10,49 @@
 
 
 #ifdef _WIN32
-  #define strncasecmp _strnicmp
+  #define HOME_ENV "USERPROFILE"
+#else
+  #define HOME_ENV "HOME"
 #endif
 
-bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
-  FILE* configuration_file;
-  if (dest_size > GID_CONFIGURATION_PATH_MAX)
-    dest_size = GID_CONFIGURATION_PATH_MAX;
+int strncasecmp(
+    char const *const s1,
+    char const *const s2,
+    size_t const strsz
+) {
+  unsigned char const *us1 = (unsigned char const *)s1;
+  unsigned char const *us2 = (unsigned char const *)s2;
+  for (size_t i = 0; i < strsz && tolower(*us1) == tolower(*us2++); ++i) {
+    if (*us1++ == 0 || i + 1 == strsz) return 0;
+  }
+  return tolower(*us1) - tolower(*--us2);
+}
+
+bool detectFile(char *const dest, size_t destsz, char const *const exe_path) {
+  FILE *configuration_file;
+  if (destsz > GID_CONFIGURATION_PATH_MAX)
+    destsz = GID_CONFIGURATION_PATH_MAX;
 
   size_t cpy_len = 0;
 
   // Environment variable configuration path
-  char const*const env_path = getenv("GID_CONFIGURATION");
-  if (env_path) {
-    cpy_len = strlen(env_path);
-    if (cpy_len < dest_size) {
-      configuration_file = fopen(env_path, "rb");
-      if (configuration_file) {
-        fclose(configuration_file);
-        strcpy(dest, env_path);
-        dest[cpy_len] = 0;
-        return true;
-      }
-    }
+  char const *const env_path = getenv("GID_CONFIGURATION");
+  if (
+      env_path &&
+      (cpy_len = strlen(env_path)) < destsz &&
+      (configuration_file = fopen(env_path, "rb"))
+  ) {
+      fclose(configuration_file);
+      strcpy(dest, env_path);
+      return true;
   }
 
   char buffer[GID_CONFIGURATION_PATH_MAX];
   // Local configuration path
-  cpy_len = dirLength(exe_path) + 17;
-  if (cpy_len < GID_CONFIGURATION_PATH_MAX && cpy_len < dest_size) {
-    dirName(buffer, exe_path);
+  if ((cpy_len = dirLength(exe_path, destsz) + 17) < destsz) {
+    dirName(buffer, destsz, exe_path);
     strcat(buffer, "configuration.gid");
-    configuration_file = fopen(buffer, "rb");
-    if (configuration_file) {
+    if ((configuration_file = fopen(buffer, "rb"))) {
       fclose(configuration_file);
       strcpy(dest, buffer);
       dest[cpy_len] = 0;
@@ -50,38 +60,16 @@ bool detectFile(char* dest, size_t dest_size, char const*const exe_path) {
     }
   }
 
-  // Home `.config` folder configuration path
-  char const*const home_path = getenv("HOME");
-  if (home_path) {
-    cpy_len = strlen(home_path) + 30;
-    if (cpy_len < GID_CONFIGURATION_PATH_MAX && cpy_len < dest_size) {
-      strcpy(buffer, home_path);
-      fillTrailingSlash(buffer);
-      strcat(buffer, ".config/gid/configuration.gid");
-      configuration_file = fopen(buffer, "rb");
-      if (configuration_file) {
-        fclose(configuration_file);
-        strcpy(dest, buffer);
-        return true;
-      }
-    }
-  }
-
-  // USERPROFILE as `.config` (only on Windows)
-  char const*const up_path = getenv("USERPROFILE");
-  if (up_path) {
-    cpy_len = strlen(up_path) + 30;
-    if (cpy_len < GID_CONFIGURATION_PATH_MAX && cpy_len < dest_size) {
-      strcpy(buffer, up_path);
-      buffer[cpy_len - 30] = 0;
-      fillTrailingSlash(buffer);
-      strcat(buffer, ".config/gid/configuration.gid");
-      configuration_file = fopen(buffer, "rb");
-      if (configuration_file) {
-        fclose(configuration_file);
-        strcpy(dest, buffer);
-        return true;
-      }
+  // `.config` folder configuration path at HOME, or USERPROFILE on Windows
+  char const*const home_path = getenv(HOME_ENV);
+  if (home_path && (cpy_len = strlen(home_path) + 30) < destsz) {
+    strcpy(buffer, home_path);
+    fillTrailingSlash(buffer, destsz, buffer);
+    strcat(buffer, ".config/gid/configuration.gid");
+    if ((configuration_file = fopen(buffer, "rb"))) {
+      fclose(configuration_file);
+      strcpy(dest, buffer);
+      return true;
     }
   }
 
@@ -100,8 +88,7 @@ GidConfiguration parseFile(char const*const file_name) {
   GidConfiguration result;
   result.git_profiles_length = 0;
   result.active_git_profile = -1;
-  size_t i;
-  for (i = 0; i < GID_CONFIGURATION_MAX_NUM_PROFILES; ++i) {
+  for (int i = 0; i < GID_CONFIGURATION_MAX_NUM_PROFILES; ++i) {
     result.git_profiles[i].name[0] = 0;
     result.git_profiles[i].user_name[0] = 0;
     result.git_profiles[i].user_email[0] = 0;
@@ -110,46 +97,33 @@ GidConfiguration parseFile(char const*const file_name) {
     result.git_profiles[i].ssh_key_path[0] = 0;
   }
   char line_buffer[GID_CONFIGURATION_PARSE_LINEBUF_LEN];
-  size_t const line_buffer_len = GID_CONFIGURATION_PARSE_LINEBUF_LEN;
+  int const line_buffer_len = GID_CONFIGURATION_PARSE_LINEBUF_LEN;
   while (fgets(line_buffer, line_buffer_len, file)) {
     bool split = false;
-    int key_start = -1;
-    int key_end = -1;
-    int val_start = -1;
-    int val_end = -1;
-    int i = 0;
-    while (i < line_buffer_len && line_buffer[i] > 0) {
+    bool started = false;
+    size_t key_start = 0, key_end = 0, val_start = 0, val_end = 0;
+    for (int i = 0; i < line_buffer_len && line_buffer[i]; ++i) {
       // Ignore empty spaces in line
-      if (isspace(line_buffer[i])) {
-        ++i;
-        continue;
-      }
+      if (isspace(line_buffer[i])) continue;
 
       if (line_buffer[i] == ':') {
-        ++i;
         split = true;
+        started = false;
         continue;
       }
 
       if (!split) {
-        if (key_start == -1) key_start = i;
+        if (!started && (started = true)) key_start = i;
         else key_end = i;
       }
       else {
-        if (val_start == -1) val_start = i;
+        if (!started && (started = true)) val_start = i;
         else val_end = i;
       }
-
-      ++i;
     }
-    int key_len = key_end - key_start;
-    int val_len = val_end - val_start;
-
-    if (key_len <= 0) continue;
-    if (val_len <= 0) continue;
-    key_len++;
-    val_len++;
-
+    if (key_end <= key_start || val_end <= val_start) continue;
+    size_t key_len = key_end - key_start + 1;
+    size_t val_len = val_end - val_start + 1;
     char const*const key = &line_buffer[key_start];
     char const*const val = &line_buffer[val_start];
 
@@ -240,15 +214,19 @@ GidConfiguration parseFile(char const*const file_name) {
         current_git_profile->tag_gpgsign[val_len] = 0;
       }
       else if (key_len == 12 && !strncasecmp(key, "ssh_key_path", 12)) {
-        if (val_len + 2 >= GID_GITPROFILE_SSH_KEY_PATH_LEN) {
-          fprintf(stderr, "parsed \"ssh_key_path\" is too long\n");
-          exit(EXIT_FAILURE);
-        }
         if (strchr(val, '\'')) {
+          if (val_len >= GID_GITPROFILE_SSH_KEY_PATH_LEN) {
+            fprintf(stderr, "parsed \"ssh_key_path\" is too long\n");
+            exit(EXIT_FAILURE);
+          }
           strncpy(&current_git_profile->ssh_key_path[0], val, val_len);
           current_git_profile->ssh_key_path[val_len] = 0;
         }
         else {
+          if (val_len + 2 >= GID_GITPROFILE_SSH_KEY_PATH_LEN) {
+            fprintf(stderr, "parsed \"ssh_key_path\" is too long\n");
+            exit(EXIT_FAILURE);
+          }
           current_git_profile->ssh_key_path[0] = '\'';
           strncpy(&current_git_profile->ssh_key_path[1], val, val_len);
           current_git_profile->ssh_key_path[val_len + 1] = '\'';
@@ -261,11 +239,10 @@ GidConfiguration parseFile(char const*const file_name) {
 }
 
 int gitProfileExists(
-    GidConfiguration const*const gid_configuration,
-    char const*const profile_name
+    GidConfiguration const *const gid_configuration,
+    char const *const profile_name
 ) {
-  size_t i;
-  for (i = 0; i < gid_configuration->git_profiles_length; ++i) {
+  for (int i = 0; i < gid_configuration->git_profiles_length; ++i) {
     if (!strcmp(&gid_configuration->git_profiles[i].name[0], profile_name))
       return i;
   }

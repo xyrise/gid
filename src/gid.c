@@ -35,9 +35,13 @@ int main(int argc, char * argv[]) {
   }
 
   // Append arguments to internal Git call
+  if (configuration.active_git_profile < 0) {
+    fprintf(stderr, "no default profile, profile must be provided\n");
+    exit(EXIT_FAILURE);
+  }
   GidGitProfile const* profile =
     &configuration.git_profiles[configuration.active_git_profile];
-  int num_params = concatParamStrings(
+  concatParamStrings(
       profile,
       git_command,
       COMMAND_MAX,
@@ -54,6 +58,8 @@ int main(int argc, char * argv[]) {
     strcat(git_command, "\" ");
   }
 
-  system(git_command);
+  if (system(git_command)) {
+    fprintf(stderr, "Git command returned with non-zero exit code\n");
+  }
   return 0;
 }
