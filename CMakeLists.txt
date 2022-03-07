@@ -38,7 +38,6 @@ target_include_directories (gidc
     "./include"
 )
 
-add_subdirectory ("./include")
 add_subdirectory ("./src")
 
 install (
